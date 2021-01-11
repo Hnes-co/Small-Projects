@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <style>
+
+            body {
+                background-color: #ffffff;
+                height: 800px;
+            }
+
+            .container, .header {
+                width: 80%;
+                margin-left: auto;
+                margin-right: auto;
+                border-style: solid;
+                border-color: #000000;  
+                margin-bottom: 15px;
+            }
+
+            .calender {
+                width: 80%;
+                height: 80%;
+                margin-left: auto;
+                margin-right: auto;
+                border-style: solid;
+                border-color: #000000;  
+            }
+
+            .header {
+                height: auto;
+                text-align: center;
+                font-size: xx-large;
+                margin-bottom: 15px;
+            }
+
+            
+
+            .day-box {       
+                text-align: center;
+                border-style: solid solid solid solid;
+                background-color: white;
+            }
+
+            .button {
+                width: 80%;
+                margin-left: 10%;
+                margin-right: 10%;
+                margin-bottom: 15px;
+                border-radius: 12px;
+                font-size: x-large;
+                color: #000000;
+                border: 2px solid #000000; 
+                transition-duration: 0.5s;
+            }
+            
+            .button2 {
+                width: 30%;
+                margin-left: 10%;
+                margin-right: 10%;
+                display: inline-block;
+            }
+            
+            .button:hover, .button2:hover {
+                color: white;
+                background-color: #000000;
+            }
+
+            
+
+            #kkJaVuosi {
+                width: 100%;
+                text-align: center;
+            }
+
+            #previousMonth {
+                margin: 10px;
+
+            }
+            #nextMonth{
+                float: right;
+                margin: 10px;
+            }
+            .days {
+                height: 99%;
+            }
+            table {
+                width: 100%;
+                height: 84%;
+                border-collapse: collapse;
+            }
+            caption{
+                font-size: 50px;
+            }
+            td,
+            th {
+                width: 14%;
+            border: 1px solid black;
+            padding: 3px;
+            text-align: center;
+            }
+
+            th {
+            font-weight: bold;
+            background-color: #E6E6E6;
+            }
+            .selected  {
+                background-color: blue;
+                color: white;
+            }
+            .currentDay {
+                border: 3px solid blue;                
+            }
+
+        </style>
+    </head>
+    
+    <body>
+
+        <div class="header">PROJEKTI 1: Kalenteri</div>
+
+
+        <div class="calender" id="calendar">
+            <div class="months" id="months">
+                <h2 id="kkJaVuosi">MONTH HERE</h2>
+                <button id="previousMonth" onclick="toPrevMonth()">edellinen kk</button>
+                <button id="nextMonth" onclick="toNextMonth()">seuraava kk</button>
+            </div>
+            <div class="days" id="days">
+                
+            </div>
+        </div>
+
+
+
+          <script>
+
+            let d = new Date()
+            let year, month, date, day, currMonth
+                        
+            let months = ["TAMMIKUU","HELMIKUU","MAALISKUU","HUHTIKUU","TOUKOKUU","KESÄKUU","HEINÄKUU","ELOKUU","SYYSKUU","LOKAKUU","MARRASKUU","JOULUKUU"];
+            let weekdays = ["Maanantai", "Tiistai", "Keskiviikko", "Torstai", "Perjantai", "Lauantai", "Sunnuntai"];
+            
+
+            function getDay(d) { 
+                day = d.getDay();
+                if (day == 0) day = 7; // Sunnuntaista(0) tehdään viikon viimeinen päivä
+                return day - 1;
+            }
+
+            function initialCalendar() {
+                year = d.getFullYear()
+                month = d.getMonth()
+                currMonth = months[month]
+
+                createCalendar(year, month, currMonth);
+            }
+                    
+            function toNextMonth() {
+                
+                if(month === 11)
+                {
+                    month = 0
+                    year = year + 1
+                    currMonth = months[month]
+                    createCalendar(year, month, currMonth)
+                }
+                else
+                {
+                    month = month + 1
+                    currMonth = months[month]
+                    createCalendar(year, month, currMonth)
+                }                
+                
+            }
+
+            function toPrevMonth() {
+                
+                if(month === 0)
+                {
+                    month = 11
+                    year = year - 1
+                    currMonth = months[month]
+                    createCalendar(year, month, currMonth)
+                }
+                else
+                {
+                    month = month - 1
+                    currMonth = months[month]
+                    createCalendar(year, month, currMonth)
+                }
+               
+            }
+
+            function handleDateClick(selectedDay, kk, vuosi) {
+
+                let dday = document.getElementById("realDay" + selectedDay)
+                dday.classList.toggle("selected")
+                let tempkk = kk + 1;
+                
+
+                if(document.getElementsByClassName("selected").length > 1)
+                {
+                    for(let i = 1; i <= 31; i++)
+                    {
+                        let checkday = document.getElementById("realDay" + i)
+                        if(checkday.classList.contains("selected") && i !== selectedDay)
+                        {
+                            checkday.classList.toggle("selected")
+                        }
+                    }
+                }
+                
+            }
+
+            function createCalendar(year, month, currMonth) {
+                d = new Date(year, month)
+                let tempD = new Date()
+        
+                document.getElementById('kkJaVuosi').innerHTML = currMonth + " " + year
+                let table = '<table><tr><th>Maanantai</th><th>Tiistai</th><th>Keskiviikko</th><th>Torstai</th><th>Perjantai</th><th>Lauantai</th><th>Sunnuntai</th></tr><tr>';
+        
+                //Tyhjiä viikonpäiviä kuukauden ekaan päivään asti
+                for (let i = 0; i < getDay(d); i++) {
+
+                    table += '<td></td>';
+                }
+                        
+                // Oikeat päivät
+                while (d.getMonth() == month) {
+                    table += '<td id="realDay' + d.getDate() + '" onClick="handleDateClick(' + d.getDate()+','+month+','+year+ ')">' + d.getDate() + '</td>';
+        
+                    if (getDay(d) % 7 == 6) { // viikon viimeinen päivä -> uusi rivi
+                    table += '</tr><tr>';
+                    }
+        
+                    d.setDate(d.getDate() + 1);
+                }
+        
+                // viimeiselle riville tyhjiä viikonpäiviä jos kuukauden vika pv ei ole sunnuntai
+                if (getDay(d) != 0) {
+                    for (let i = getDay(d); i < 7; i++) {
+                    table += '<td></td>';
+                    }
+                }
+        
+                // suljetaan table
+                table += '</tr></table>';
+        
+                document.getElementById('days').innerHTML = table;
+
+                if(year == tempD.getFullYear() && month == tempD.getMonth())
+                {
+                    let currDay = document.getElementById('realDay'+tempD.getDate())
+                    currDay.classList.toggle("currentDay")
+                }
+            }
+                    
+
+            initialCalendar();
+          </script>
+
+    </body>
+</html>
